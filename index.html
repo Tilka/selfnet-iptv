@@ -1,0 +1,43 @@
+<!doctype html>
+<meta charset=utf-8>
+<title>SelfStreaming</title>
+<style>
+	body {
+		color: darkgray;
+		background-color: black;
+		font-family: sans;
+	}
+	#channel-list {
+		border: 1px solid black;
+		border-spacing: 0;
+		font-size: 12px;
+	}
+	#channel-list tbody tr:nth-child(odd) {
+		background-color: #111;
+	}
+	#channel-list tbody tr:hover {
+		cursor: pointer;
+		background-color: #402200;
+	}
+	#player-container {
+		text-align: center;
+	}
+	#player-container * {
+		border: 1px solid #333;
+	}
+</style>
+<script src="js/jquery-2.0.0.min.js"></script>
+<script src="js/jquery.ajax-progress.js"></script>
+<script src="js/selfstreaming-lib.js"></script>
+<script src="js/selfstreaming-sapsdp.js"></script>
+<script src="js/selfstreaming-ui.js"></script>
+
+<div id=player-container></div>
+<div id=delivery-method>
+	<br><label><input type=radio name=delivery-method id=method-unicast value=unicast>Unicast</label>
+	<br><label><input type=radio name=delivery-method id=method-multicast value=multicast>Multicast</label>
+</div>
+<table id=channel-list style='display:none'>
+	<thead><tr><th>Channel<th>Current Show<th>Description
+	<tbody>
+</table>
