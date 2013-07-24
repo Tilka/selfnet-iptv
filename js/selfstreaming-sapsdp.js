@@ -103,7 +103,7 @@ function parseSapPackets(buffer, sessions) {
     session.times_seen = existing_session ? existing_session.times_seen + 1 : 1;
     sessions[session.ip] = session;
     if (session.times_seen >= 3) {
-        // a session has been seen three times -> every session should have had a chance to appear at least once
+        // a session has been seen three times -> we assume every session had a chance to appear at least once
         return -1;
     }
     var rest = parseSapPackets(buffer.slice(pos), sessions);
@@ -163,5 +163,5 @@ function loadSessions(loadSessionsCallback) {
             xhr.overrideMimeType('text/plain; charset=x-user-defined');
         };
     }
-    $.ajax('/stream/' + SAP_IP + ':' + SAP_PORT + '/', ajaxAttr);
+    $.ajax('/proxy/' + SAP_IP + ':' + SAP_PORT + '/SAP.bin', ajaxAttr);
 }

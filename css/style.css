@@ -1,0 +1,57 @@
+body {
+	font-family: sans-serif;
+	color: #a0a0a0;
+	background-color: black;
+	background: url(../img/tile.png);
+}
+
+a {
+	color: #a0a0a0;
+}
+
+h1, h2, h3, h4, h5, h6 {
+	color: #FFA500;
+	font-family: serif;
+}
+
+#container {
+	width: 960px;
+	margin: 0 auto;
+}
+
+#channel-list {
+	border-spacing: 0;
+	font-size: 12px;
+}
+
+#channel-list tbody tr:nth-child(odd) {
+	background-color: #111;
+}
+
+#channel-list tbody tr:hover, #channel-list tr:hover a {
+	cursor: pointer;
+	//background-color: #402200;
+	color: black;
+	background-color: orange;
+}
+
+#player-container {
+	text-align: center;
+}
+
+#player-container * {
+	border: 1px solid #333;
+}
+
+.eyecatcher {
+	color: white;
+	font-weight: bold;
+}
+
+ol li {
+	margin-bottom: 20px;
+}
+
+img.thumbnail {
+	width: 200px;
+}

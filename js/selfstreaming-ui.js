@@ -1,13 +1,11 @@
 $(function() {
+    var delivery_method = location.hash == '#unicast' ? 'unicast' : 'multicast';
+
     function play(player, session) {
-        if ($('input[name=delivery-method]:checked').val() == 'multicast') {
-            var stream = 'rtp://@' + session.ip + ':' + session.port;
-        } else {
-            var stream = '/stream/' + session.ip + ':' + session.port + '/';
-        }
+        var stream_url = get_url(session, delivery_method);
         var p = player[0].playlist;
-        // FIXME: for some reason, switching to a different multicast stream doesn't work if clear() is called and vlc crashed often
-        p.add(stream);
+        // FIXME: for some reason, switching to a different multicast stream doesn't work if clear() is called, vlc crashes often
+        p.add(stream_url);
         p.next();
 
         if (!session.name.match(' HD$')) {
@@ -15,9 +13,6 @@ $(function() {
             player[0].video.deinterlace.enable('blend');
         }
     }
-
-    $('#method-multicast').click();
-    //$('#method-unicast').click();
 
     $('#player-container').html('<embed id=player type=application/x-vlc-plugin version=VideoLAN.VLCPlugin.2 toolbar=false width=700 height=400 pluginspage=http://www.videolan.org/vlc/>');
 
@@ -36,9 +31,12 @@ $(function() {
                 });
                 for (var i in keys) {
                     var ip = keys[i], session = sessions[ip], channel = $('<tr>');
+                    var url = get_url(session, delivery_method);
+                    var link = $('<a>Link<b>↗</b></a>').attr('href', url).attr('title', 'direct stream link for external players (right-click and copy link address)');
                     channel.append($('<td>').text(session.name));
                     channel.append($('<td>').text(session.show));
                     channel.append($('<td>').text(session.description));
+                    channel.append($('<td>').append(link));
                     channel.click(session, function(event) {
                         var player = $('#player');
                         play(player, event.data);

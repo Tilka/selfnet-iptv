@@ -1,3 +1,31 @@
+function get_url(session, somecast, absolute) {
+    return somecast == 'unicast' ? get_http_url(session, absolute) : get_rtp_url(session);
+}
+
+function get_rtp_url(session) {
+    return 'rtp://' + session.ip + ':' + session.port;
+}
+
+function get_http_url(session, absolute) {
+    var url = '/proxy/' + session.ip + ':' + session.port + '/' + encodeURIComponent(session.name) + '.ts';
+    if (absolute == 'absolute') {
+        url = location.origin + url;
+    }
+    return url;
+}
+
+function sort_sessions(sessions) {
+    var sorted_sessions = [], keys = Object.keys(sessions).sort(function(ip1, ip2) {
+        var x = sessions[ip1].name.toLocaleLowerCase(), y = sessions[ip2].name.toLocaleLowerCase();
+        return x > y ? 1 : (x < y ? -1 : 0);
+    });
+    for (var i in keys) {
+        var ip = keys[i];
+        sorted_sessions.push(sessions[ip]);
+    }
+    return sorted_sessions;
+}
+
 var prototypeExtensions = [
     [String, {
         /*!
