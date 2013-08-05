@@ -90,12 +90,13 @@ function parseSapPackets(buffer, sessions) {
             p: null, // phone number
             t: null, // timing
             u: null, // URI
+            b: null, // bandwidth
         })[lineType];
         if (lineHandler) {
             lineHandler(String.fromTypedArray(line.subarray(2)));
         } else {
             if (lineHandler === undefined) {
-                console.error('parseSapPackets: unknown line type "%s"', lineType);
+                console.warn('parseSapPackets: unknown line type "%s"', lineType);
             }
         }
     }
