@@ -51,12 +51,15 @@ function parseSapPackets(buffer, sessions) {
     var pos = 4 + addrLength;
     if (buffer.byteLength < pos) return 0;
     var source = buffer.slice(4, pos);
-    var sdpMime = 'application/sdp\x00'.toArrayBuffer();
-    if (buffer.byteLength < pos + sdpMime.byteLength) return 0;
-    if (buffer.slice(pos).memcmp(sdpMime, sdpMime.byteLength) != 0) {
-        throw 'parseSapPackets: unknown MIME type';
+    if (buffer.slice(pos).memcmp('v=0'.toArrayBuffer(), 3) != 0) {
+        var sdpMime = 'application/sdp\x00'.toArrayBuffer();
+        if (buffer.byteLength < pos + sdpMime.byteLength) return 0;
+        if (buffer.slice(pos).memcmp(sdpMime, sdpMime.byteLength) == 0) {
+            pos += sdpMime.byteLength;
+        } else {
+            throw 'parseSapPackets: unknown MIME type';
+        }
     }
-    pos += sdpMime.byteLength;
     var session = {};
     while (1) {
         var eol = buffer.slice(pos).memchr(13);
