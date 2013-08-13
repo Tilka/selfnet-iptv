@@ -17,9 +17,6 @@ function isResponseTypeSupported(responseType) {
     return xhr.responseType === responseType;
 }
 var usingChunkedArrayBuffer = isResponseTypeSupported('moz-chunked-arraybuffer');
-if (!usingChunkedArrayBuffer) {
-    console.info("If you got an error about moz-chunked-arraybuffer, don't worry about it, that was just a test.");
-}
 
 function inet_ntop(buffer) {
     var size = buffer.byteLength;
