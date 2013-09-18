@@ -133,9 +133,10 @@ function loadSessions(loadSessionsCallback) {
                 var doneLoading = parsedBytes == -1;
                 if (doneLoading) {
                     xhr.abort();
+                    clearTimeout(xhrCancelTimer);
                     var deltaTime = new Date().getTime() - startTime;
                     var sessionCount = Object.keys(sessions).length;
-                    console.log('SAP stream cancelled normally, got %d sessions, took %d ms', sessionCount, deltaTime);
+                    console.log('Done, took %d ms, got %d sessions', deltaTime, sessionCount);
                 } else {
                     if (usingChunkedArrayBuffer) {
                         // the response ArrayBuffer is only available during this progress event,
@@ -148,6 +149,7 @@ function loadSessions(loadSessionsCallback) {
                 loadSessionsCallback(sessions, doneLoading);
             } catch (e) {
                 // just in case anything breaks, make sure to cancel the request
+                console.error('Cancelling SAP stream XHR due to exception.');
                 event.target.abort();
                 throw e;
             }
@@ -164,5 +166,10 @@ function loadSessions(loadSessionsCallback) {
             xhr.overrideMimeType('text/plain; charset=x-user-defined');
         };
     }
-    $.ajax('/proxy/' + SAP_IP + ':' + SAP_PORT + '/SAP.bin', ajaxAttr);
+    var xhr = $.ajax('/proxy/' + SAP_IP + ':' + SAP_PORT + '/SAP.bin', ajaxAttr);
+    // auto-cancel after a while to make sure we don't exhaust memory
+    var xhrCancelTimer = setTimeout(function() {
+        console.error('SAP stream XHR is taking too long, cancelling.');
+        xhr.abort();
+    }, 10 * 1000);
 }
