@@ -18,7 +18,13 @@ $(function() {
 
     var vlcPlugin = navigator.plugins['VLC Web Plugin'];
     if (!vlcPlugin) {
-        alert('Please install/enable the VLC browser plugin.');
+        $('#notes').html('Please install/enable the VLC browser plugin.');
+    } else {
+        var version = $('#player')[0].VersionInfo.split(' ')[0].split('.');
+        var major = parseInt(version[0]), minor = parseInt(version[1]);
+        if (major * 100 + minor < 201) {
+            $('#notes').html('Upgrading to <a href="http://videolan.org">VLC 2.1.0 or newer</a> fixes several crashes in the web plugin.');
+        }
     }
 
     function reloadChannelList(firstTime) {

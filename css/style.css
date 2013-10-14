@@ -49,6 +49,13 @@ h1, h2, h3, h4, h5, h6 {
 	margin-right: auto;
 }
 
+.no-bullets {
+	list-style-type: none;
+}
+.no-bullets>li {
+	padding: 5px;
+}
+
 .eyecatcher {
 	display: inline-block;
 	color: black;
@@ -65,4 +72,9 @@ ol li {
 
 img.thumbnail {
 	width: 200px;
+}
+
+#notes {
+	color: red;
+	font-weight: bold;
 }
