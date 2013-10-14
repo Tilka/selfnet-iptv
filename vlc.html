@@ -1,6 +1,7 @@
 <!doctype html>
 <meta charset=utf-8>
 <title>SelfStreaming</title>
+<link rel=stylesheet href=css/bootstrap.min.css>
 <link rel=stylesheet href=css/style.css>
 <script src=js/jquery-2.0.3.min.js></script>
 <script src=js/jquery.ajax-progress.js></script>
@@ -8,9 +9,13 @@
 <script src=js/selfstreaming-sapsdp.js></script>
 <script src=js/selfstreaming-ui.js></script>
 
-<a href=/><img src=img/selfstreaming.png alt=SelfStreaming height=58 width=382 class=center></a>
-<div id=player-container class=center></div>
-<table id=channel-list style=display:none>
-	<thead><tr><th>Channel<th>Current Show<th>Description<th>Link
-	<tbody>
-</table>
+<div class="container">
+	<div class="page-header text-center">
+		<a href=/><img src=img/selfstreaming.png alt=SelfStreaming height=58 width=382></a>
+	</div>
+	<div id=player-container class=center></div>
+	<table id=channel-list style=display:none class="table table-hover">
+		<thead><tr><th>Channel<th>Current Show<th>Description<th>Link
+		<tbody>
+	</table>
+</div>

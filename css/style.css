@@ -5,3 +5,7 @@
 #player-container * {
     border: 1px solid #333;
 }
+
+#channel-list tbody tr:hover, #channel-list tr:hover a {
+    cursor: pointer;
+}
