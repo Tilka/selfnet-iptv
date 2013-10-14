@@ -17,14 +17,21 @@ $(function() {
     $('#player-container').html('<embed id=player type=application/x-vlc-plugin version=VideoLAN.VLCPlugin.2 toolbar=false width=700 height=400 pluginspage=http://www.videolan.org/vlc/>');
 
     var vlcPlugin = navigator.plugins['VLC Web Plugin'];
+    var notice;
     if (!vlcPlugin) {
-        $('#notes').html('Please install/enable the VLC browser plugin.');
+        notice = 'Please install/enable the VLC browser plugin.';
     } else {
         var version = $('#player')[0].VersionInfo.split(' ')[0].split('.');
         var major = parseInt(version[0]), minor = parseInt(version[1]);
         if (major * 100 + minor < 201) {
-            $('#notes').html('Upgrading to <a href="http://videolan.org">VLC 2.1.0 or newer</a> fixes several crashes in the web plugin.');
+            notice = 'Upgrading to <a href="http://videolan.org">VLC 2.1.0 or newer</a> fixes several crashes in the web plugin.';
         }
+    }
+    if (notice) {
+        $('#notice').html(notice).show();
+        setTimeout(function() {
+            $('#notice').fadeTo(2000, 0.3);
+        }, 10*1000);
     }
 
     function reloadChannelList(firstTime) {
