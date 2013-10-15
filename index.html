@@ -17,14 +17,14 @@
         <div class="text-center">
             <a href=/ ><img src=img/selfstreaming.png alt=SelfStreaming height=58 width=382></a>
         </div>
-        <p class="lead">SelfStreaming is free IPTV by Selfnet, allowing you to legally watch TV on your computer (only available inside the Selfnet/WH-Netz intranet).
+        <p class="lead">SelfStreaming is free IPTV by Selfnet, allowing you to legally watch TV on your computer.
     </div>
 
     <div class="row">
         <div class="col-lg-6">
             <h2>In-Browser Stream List</h2>
             <p>The VLC browser plugin (comes with <a href=https://www.videolan.org/vlc/>the main VLC installer</a>) is required for watching.<br>
-            <p><a class="btn btn-success btn-lg" href=vlc.html#multicast>Multicast RTP (recommended) – <b>most efficient</b> transmission method</a><br>
+            <p><a class="btn btn-success btn-lg" href=vlc.html#multicast><span class="glyphicon glyphicon-play"></span> Multicast RTP (recommended) – <b>most efficient</b> transmission method</a><br>
             <p><a href=vlc.html#unicast>Unicast HTTP</a> – if you are in a <b>wireless network</b> or if you can't receive multicast
         </div>
         <div class="col-lg-4 col-lg-offset-2">
@@ -33,10 +33,11 @@
             <b class="label label-danger">the other stream lists do not work for you.</b></p>
             <p>If neither the in-browser nor the SAP stream lists work for you, you can download a static playlist of all current streams. The stream addresses may change at any time and will not update automatically if using this method!</p>
             <p>Playlist format (if unsure, use M3U):</p>
-            <button type=button id=m3u-button class="btn">M3U</button>
-            <button type=button id=xspf-button class="btn">XSPF</button>
-            <br>
-            <span id=progress-span></span><a href=# id=playlist-download-link style=display:none></a>
+            <p>
+                <button type=button id=m3u-button class="btn"><span class="glyphicon glyphicon-list"></span> M3U</button>
+                <button type=button id=xspf-button class="btn"><span class="glyphicon glyphicon-list"></span> XSPF</button>
+            </p>
+            <p><span id=progress-span></span><a href=# id=playlist-download-link style=display:none></a></p>
         </div>
     </div>
 

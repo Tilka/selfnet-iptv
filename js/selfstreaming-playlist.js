@@ -39,14 +39,13 @@ $(function() {
         var link = $('#playlist-download-link');
         function progressCallback(sessions, done) {
             link.hide();
-            progress.text(Object.keys(sessions).length + ' streams');
+            progress.text('Generating playlist... ' + Object.keys(sessions).length + ' streams');
             progress.show();
             if (done) {
                 var playlist = formatter(sort_sessions(sessions));
                 link.attr('download', 'SelfStreaming.' + file_extension);
                 link.attr('href', 'data:' + mime_type + ';charset=utf-8,' + encodeURIComponent(playlist));
-                link.text('Download ' + file_extension.toUpperCase() + ' playlist');
-                link.show();
+                link.html('<span class="glyphicon glyphicon-save"></span> Download ' + file_extension.toUpperCase() + ' playlist').show();
                 progress.hide();
             }
         }
