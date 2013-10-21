@@ -118,41 +118,34 @@ function loadSessions(loadSessionsCallback) {
     var unparsedData = new ArrayBuffer(0);
     var ajaxAttr = {
         progress: function(event) {
-            try {
-                var xhr = event.target;
-                var response = xhr.response;
-                if (usingChunkedArrayBuffer) {
-                    var sapData = unparsedData.append(response);
-                } else {
-                    if (response.length == 0) {
-                        return;
-                    }
-                    var sapData = response.slice(start).toArrayBuffer();
+            var xhr = event.target;
+            var response = xhr.response;
+            if (usingChunkedArrayBuffer) {
+                var sapData = unparsedData.append(response);
+            } else {
+                if (response.length == 0) {
+                    return;
                 }
-                var parsedBytes = parseSapPackets(sapData, sessions);
-                var doneLoading = parsedBytes == -1;
-                if (doneLoading) {
-                    xhr.abort();
-                    clearTimeout(xhrCancelTimer);
-                    var deltaTime = new Date().getTime() - startTime;
-                    var sessionCount = Object.keys(sessions).length;
-                    console.log('Done, took %d ms, got %d sessions', deltaTime, sessionCount);
-                } else {
-                    if (usingChunkedArrayBuffer) {
-                        // the response ArrayBuffer is only available during this progress event,
-                        // so we need to copy the unparsed end of it for the next call
-                        unparsedData = sapData.slice(parsedBytes);
-                    } else {
-                        start += parsedBytes;
-                    }
-                }
-                loadSessionsCallback(sessions, doneLoading);
-            } catch (e) {
-                // just in case anything breaks, make sure to cancel the request
-                console.error('Cancelling SAP stream XHR due to exception.');
-                event.target.abort();
-                throw e;
+                var sapData = response.slice(start).toArrayBuffer();
             }
+            var parsedBytes = parseSapPackets(sapData, sessions);
+            var doneLoading = parsedBytes == -1;
+            if (doneLoading) {
+                xhr.abort();
+                clearTimeout(xhrCancelTimer);
+                var deltaTime = new Date().getTime() - startTime;
+                var sessionCount = Object.keys(sessions).length;
+                console.log('Done, took %d ms, got %d sessions', deltaTime, sessionCount);
+            } else {
+                if (usingChunkedArrayBuffer) {
+                    // the response ArrayBuffer is only available during this progress event,
+                    // so we need to copy the unparsed end of it for the next call
+                    unparsedData = sapData.slice(parsedBytes);
+                } else {
+                    start += parsedBytes;
+                }
+            }
+            loadSessionsCallback(sessions, doneLoading);
         }
     };
     if (usingChunkedArrayBuffer) {
