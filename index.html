@@ -70,17 +70,16 @@
             <ul>
                 <li>Wireless networks deal badly with multicast. Use the HTTP-tunneled unicast streams instead. Even then, the streams may buffer very slowly, depending on your signal quality.
                 <li>If you are using a router in your room and would like to use the multicast streams, you need to configure two UDP port forwardings: one for the video streams on port 1234 and one for the SAP stream on port 9875. (In your router, not at My.Selfnet.)
-                <li>Bad weather can decrease satellite signal quality. To check for thunderstorms, google "weather in Stuttgart, Germany" or go outside.
+                <li>Bad weather can decrease satellite signal quality. Help us build a more geographically distributed system!
                 <li>Virtual network interfaces (by VirtualBox, VMware, Hamachi, VPN, ...) can confuse VLC.
                 <li>If something used to work for you and now it doesn't, check our Twitter account <a target=_blank href=https://twitter.com/Selfnet_eV>@Selfnet_eV</a> for recent announcements.
                 <li>Our <a href=http://www.selfnet.de/netzwerk/dienste/selfstreaming/>main website</a> also has some information about this service.
-                <li>Sometimes, small groups of channels fail. In this case, please notify us.
             </ul>
             <p>If you are still having trouble, <a href=mailto:support@selfnet.de>send us an email</a>. Make sure to describe when and how you attempted to watch the streams (SAP stream list in VLC, VLC with static playlist or this website; unicast or multicast; wireless or wired connection; which channel; etc.)
         </div>
         <div class="col-lg-6">
             <h2>How It Works</h2>
-            <p>We receive DVB-S and DVB-S2 satellite TV using a fairly large but otherwise standard dish sitting on top of our Vaihingen office. The dish is directed at the Astra satellites at 19.2°E. Currently, we only receive unscrambled transponders (multiplexed bundles of channels). The transponder streams are sent to a server running a patched version of <a href=https://www.videolan.org/projects/dvblast.html>dvblast</a>. The software remuxes them into separate MPEG-TS streams, encapsulates them in RTP, and sends them out on multicast IP addresses. Multicast enables a single IP packet to be received by multiple destinations. Some clients cannot receive multicast, so we also run <a href=http://www.udpxy.com/index-en.html>udpxy</a> to proxy them over HTTP. We don't transcode the actual video or audio data itself, so you are getting the best quality possible.
+            <p>We receive DVB-S and DVB-S2 satellite TV using a fairly large but otherwise standard dish sitting on top of our Vaihingen office. The dish is directed at the Astra satellites at 19.2°E. Currently, we only receive unscrambled transponders (multiplexed bundles of channels). The transponder streams are sent to a server running a patched version of <a href=https://www.videolan.org/projects/dvblast.html>dvblast</a>. The software remuxes them into separate MPEG-TS streams, encapsulates them in RTP, and sends them out on multicast IP addresses. Multicast is an efficient way to duplicate a single IP packet on its way to multiple receivers. Some clients cannot receive multicast, so we also run <a href=http://www.udpxy.com/index-en.html>udpxy</a> to proxy them over HTTP. We don't transcode the actual video or audio data itself, so you are getting the best quality possible.
             <p>If you would like to know more or help us extend the system, just drop by or send us an email!
         </div>
     </div>
