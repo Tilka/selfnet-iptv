@@ -1,0 +1,39 @@
+<!doctype html>
+<meta charset=utf-8>
+<title>SelfStreaming</title>
+<link rel=stylesheet href=css/bootstrap.min.css>
+<link rel=stylesheet href=css/style.css>
+<link rel=icon href=favicon.ico>
+<script src=js/jquery-2.0.3.min.js></script>
+
+<div class="container">
+    <div class="page-header text-center">
+        <a href=/><img src=img/selfstreaming.png alt=SelfStreaming height=58 width=382></a>
+        <p class=lead>SelfStreaming also has some radio channels
+    </div>
+
+    <h2>Radio Channels</h2>
+    <p>These channels are currently not announced via SAP. In most modern browsers, you should be able to play them directly, otherwise you need to open the links in your media&nbsp;player.
+    <p><audio id=player class=center style=display:none controls></audio>
+    <table id=channel-list class="table table-hover">
+        <thead><tr><th>Channel<th>Website<th>Stream Link
+        <tbody>
+        <tr class=stream><td>horads 88,6 – Hochschulradio Stuttgart<td><a href=http://www.horads.de>www.horads.de ↗</a><td><a href=radio/horads.mp3>Link ↗</a>
+        <tr class=stream><td>Klassik Radio<td><a href=http://www.klassikradio.de>www.klassikradio.de ↗</a><td><a href=radio/klassik_radio.mp3>Link ↗</a>
+    </table>
+    <hr>
+    <p>If you have any questions or suggestions, <a href=mailto:support@selfnet.de>send us an email</a>.
+</div>
+
+<script>
+$(function() {
+	var player = $('#player').show();
+	$('.stream').each(function(i, container) {
+		var link = $(container).find('a[href^="radio/"]');
+		var stream = link.attr('href');
+		$(container, link).click(function(event) {
+			player.attr('src', stream).trigger('play');
+		});
+	});
+});
+</script>

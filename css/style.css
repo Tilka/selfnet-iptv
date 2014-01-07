@@ -7,6 +7,6 @@
     margin-bottom: 20px;
 }
 
-#channel-list tbody tr:hover, #channel-list tr:hover a {
+#channel-list tbody tr:hover {
     cursor: pointer;
 }
