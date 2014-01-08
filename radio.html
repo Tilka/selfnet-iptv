@@ -13,13 +13,11 @@
     </div>
 
     <h2>Radio Channels</h2>
-    <p>These channels are currently not announced via SAP. In most modern browsers, you should be able to play them directly, otherwise you need to open the links in your media&nbsp;player.
+    <p>These channels are currently <strong>not</strong> announced via SAP. In most modern browsers, you should be able to play them directly, otherwise you need to open the links in your media&nbsp;player.
     <p><audio id=player class=center style=display:none controls></audio>
     <table id=channel-list class="table table-hover">
-        <thead><tr><th>Channel<th>Website<th>Stream Link
+        <thead><tr><th>Channel<th>Current Title<th>Website<th>Stream Link
         <tbody>
-        <tr class=stream><td>horads 88,6 – Hochschulradio Stuttgart<td><a href=http://www.horads.de>www.horads.de ↗</a><td><a href=radio/horads.mp3>Link ↗</a>
-        <tr class=stream><td>Klassik Radio<td><a href=http://www.klassikradio.de>www.klassikradio.de ↗</a><td><a href=radio/klassik_radio.mp3>Link ↗</a>
     </table>
     <hr>
     <p>If you have any questions or suggestions, <a href=mailto:support@selfnet.de>send us an email</a>.
@@ -28,12 +26,26 @@
 <script>
 $(function() {
 	var player = $('#player').show();
-	$('.stream').each(function(i, container) {
-		var link = $(container).find('a[href^="radio/"]');
-		var stream = link.attr('href');
-		$(container, link).click(function(event) {
-			player.attr('src', stream).trigger('play');
-		});
+	$.getJSON('radio/status.json', function(data) {
+		data = data.icestats;
+		for (var i in data.source) {
+			var s = data.source[i];
+			var name = s.server_name ? (s.server_name + (s.server_name == s.server_description ? '' : (' – ' + s.server_description))) : s.mount;
+			var stream = 'radio' + s.mount;
+			var td1 = $('<td>').text(name);
+			var td2 = $('<td>').text(s.title);
+			var td3 = $('<td>').append($('<a>').attr('href', s.server_url).text(s.server_url));
+			var td4 = $('<td>').append($('<a>').attr('href', stream).text('Link'));
+			var tr = $('<tr>').append(td1, td2, td3, td4);
+			tr.click({stream:stream, tr:tr}, function(e) {
+				player.attr('src', e.data.stream).trigger('play');
+				$('#channel-list tr').removeClass('active');
+				e.data.tr.addClass('active');
+			});
+			$('#channel-list tbody').append(tr);
+		}
+	}).fail(function() {
+		console.log('lol, error');
 	});
 });
 </script>
