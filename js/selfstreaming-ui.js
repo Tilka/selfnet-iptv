@@ -1,12 +1,19 @@
 $(function() {
     var delivery_method = location.hash == '#unicast' ? 'unicast' : 'multicast';
+    var occurred = {};
 
     function play(player, session) {
         var stream_url = get_url(session, delivery_method);
+        occurred = {
+            opening: false,
+            buffering: false,
+            playing: false
+        };
+
         var p = player[0].playlist;
-        // FIXME: for some reason, switching to a different multicast stream doesn't work if clear() is called, vlc crashes often
+        p.items.clear();
         p.add(stream_url);
-        p.next();
+        p.play();
 
         if (!session.name.match(' HD$')) {
             // doesn't seem to be an HD channel, it'll probably look better with deinterlacing
@@ -14,6 +21,7 @@ $(function() {
         }
     }
 
+    // VLC plugin API: https://wiki.videolan.org/Documentation:WebPlugin/
     $('#player-container').html('<embed id=player type=application/x-vlc-plugin version=VideoLAN.VLCPlugin.2 toolbar=false width=700 height=400 pluginspage=http://www.videolan.org/vlc/>');
 
     var vlcPlugin = navigator.plugins['VLC Web Plugin'];
@@ -21,11 +29,23 @@ $(function() {
     if (!vlcPlugin) {
         notice = 'Please install/enable the VLC browser plugin.';
     } else {
-        var version = $('#player')[0].VersionInfo.split(' ')[0].split('.');
+        var vlc = $('#player')[0];
+        var version = vlc.VersionInfo.split(' ')[0].split('.');
         var major = parseInt(version[0]), minor = parseInt(version[1]);
         if (major * 100 + minor < 201) {
             notice = 'Upgrading to <a href="http://videolan.org" class="alert-link">VLC 2.1.0 or newer</a> fixes several crashes in the web plugin.';
         }
+        var events = {
+            MediaPlayerOpening:   function() { occurred.opening   = true },
+            MediaPlayerBuffering: function() { occurred.buffering = true },
+            MediaPlayerPlaying:   function() { occurred.playing   = true },
+            MediaPlayerEncounteredError: function() {
+                alert('A plugin error occurred, please report this to support@selfnet.de and tell them this: ' + vlc.VersionInfo + ' ' + vlc.input.state + ' ' + JSON.stringify(occurred));
+            },
+        };
+        $.each(events, function(event_name, func) {
+            vlc.addEventListener(event_name, func, false);
+        });
     }
     if (notice) {
         $('#notice-text').html(notice);
