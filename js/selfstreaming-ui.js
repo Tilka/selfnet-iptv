@@ -71,10 +71,13 @@ $(function() {
                     channel.click(session, function(event) {
                         var player = $('#player');
                         play(player, event.data);
-                        if (player[0].scrollIntoViewIfNeeded !== undefined) {
-                            player[0].scrollIntoViewIfNeeded();
-                        } else {
-                            player[0].scrollIntoView();
+                        // don't scroll to the video if we're in fullscreen mode (probably on another screen)
+                        if (!player[0].video.fullscreen) {
+                            if (player[0].scrollIntoViewIfNeeded !== undefined) {
+                                player[0].scrollIntoViewIfNeeded();
+                            } else {
+                                player[0].scrollIntoView();
+                            }
                         }
                     });
                     tbody.append(channel);
