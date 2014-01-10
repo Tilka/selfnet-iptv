@@ -70,8 +70,10 @@
         <div class="col-lg-6">
             <h2>Troubleshooting</h2>
             <ul>
+                <li>This website currently doesn't support Internet Explorer. If you would like to help, please do! You can find the <a href=https://github.com/Selfnet/selfnet-iptv>source code at GitHub</a>.
                 <li>Wireless networks deal badly with multicast. Use the HTTP-tunneled unicast streams instead. Even then, the streams may buffer very slowly, depending on your signal quality.
                 <li>If you are using a router in your room and would like to use the multicast streams, you need to configure two UDP port forwardings: one for the video streams on port 1234 and one for the SAP stream on port 9875. (In your router, not at My.Selfnet.)
+                <li>If the website loads forever after clicking the big, green button above, make sure that there are no hanging VLC plugin processes running (easy solution: reboot, better solution: find the plugin process and kill it).
                 <li>Bad weather can decrease satellite signal quality. Help us build a more geographically distributed system!
                 <li>Virtual network interfaces (by VirtualBox, VMware, Hamachi, VPN, ...) can confuse VLC.
                 <li>If something used to work for you and now it doesn't, check our Twitter account <a target=_blank href=https://twitter.com/Selfnet_eV>@Selfnet_eV</a> for recent announcements.
