@@ -17,12 +17,13 @@
     </div>
 
     <h2>Radio Channels</h2>
-    <p>These channels are currently <strong>not</strong> announced via SAP. In most modern browsers, you should be able to play them directly, otherwise you need to open the links in your media&nbsp;player.
+    <p>These channels are currently <strong>not</strong> announced via SAP. In most modern browsers, you should be able to play them directly, otherwise you need to open the links in your media&nbsp;player. Buffering can take a couple of seconds.
     <p><audio id=player class=center style=display:none controls></audio>
     <table id=channel-list class="table table-hover">
         <thead><tr><th>Channel<th>Current Title<th>Website<th>Stream Link
         <tbody>
     </table>
+    <noscript>This website requires JavaScript.</noscript>
     <hr>
     <p>If you have any questions or suggestions, <a href=mailto:support@selfnet.de>send us an email</a>.
 </div>
@@ -30,26 +31,41 @@
 <script>
 $(function() {
 	var player = $('#player').show();
-	$.getJSON('radio/status.json', function(data) {
-		data = data.icestats;
-		for (var i in data.source) {
-			var s = data.source[i];
-			var name = s.server_name ? (s.server_name + (s.server_name == s.server_description ? '' : (' – ' + s.server_description))) : s.mount;
-			var stream = 'radio' + s.mount;
+	$.get('radio/status.xml', function(data) {
+		var sources = document.evaluate('/icestats/source', data, null, XPathResult.UNORDERED_NODE_ITERATOR_TYPE, null);
+		var source;
+		function evalXPath(node, expr) {
+			return document.evaluate(expr, source, null, XPathResult.STRING_TYPE, null).stringValue;
+		}
+		while (source = sources.iterateNext()) {
+			var mount = evalXPath(source, '@mount');
+			var name = fixEncoding(evalXPath(source, 'server_name/text()'));
+			var title = fixEncoding(evalXPath(source, 'title/text()'));
+			var url = evalXPath(source, 'server_url/text()');
+			url = url.match(/^http:\/\//) ? url : ('http://' + url);
+			var short_url = url.substr(7);
+			short_url = short_url.match(/^www./) ? short_url.substr(4) : short_url;
+			short_url = short_url.length > 21 ? (short_url.substr(0, 21-3) + '...') : short_url;
+			name = name.replace(/(, )?(©|\(c\)).*$/, '').replace(/( - )?(OGG|MP3)$/, '').replace(/ - www\..+$/, '');
+			name = name == '' ? mount.substr(1).replace(/\.(ogg|mp3)$/, '') : name;
+			var stream = 'radio' + mount;
 			var td1 = $('<td>').text(name);
-			var td2 = $('<td>').text(s.title);
-			var td3 = $('<td>').append($('<a>').attr('href', s.server_url).text(s.server_url));
+			var td2 = $('<td>').text(title);
+			var td3 = $('<td>').append($('<a>').attr('href', url).text(short_url));
 			var td4 = $('<td>').append($('<a>').attr('href', stream).text('Link'));
 			var tr = $('<tr>').append(td1, td2, td3, td4);
-			tr.click({stream:stream, tr:tr}, function(e) {
+			var context = {stream:stream, tr:tr};
+			function clickHandler(e) {
 				player.attr('src', e.data.stream).trigger('play');
 				$('#channel-list tr').removeClass('active');
 				e.data.tr.addClass('active');
-			});
+			}
+			td1.click(context, clickHandler);
+			td2.click(context, clickHandler);
 			$('#channel-list tbody').append(tr);
 		}
-	}).fail(function() {
-		console.log('lol, error');
+	}, 'xml').fail(function() {
+		console.error(arguments);
 	});
 });
 </script>
