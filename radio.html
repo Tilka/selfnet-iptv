@@ -31,23 +31,36 @@
 <script>
 $(function() {
 	var player = $('#player').show();
+	player.on('error', function(e) {
+		console.error(e);
+		if (player.attr('src').match(/ogg$/)) {
+			console.info('If you are using Chrome/Chromium, you may be hitting http://crbug.com/175281. For Firefox, make sure to use version 20 or newer.');
+		}
+	});
 	$.get('radio/status.xml', function(data) {
-		var sources = document.evaluate('/icestats/source', data, null, XPathResult.UNORDERED_NODE_ITERATOR_TYPE, null);
+		var doc = data.documentElement.ownerDocument;
+		var sources = doc.evaluate('/icestats/source', data, null, XPathResult.UNORDERED_NODE_ITERATOR_TYPE, null);
 		var source;
 		function evalXPath(node, expr) {
-			return document.evaluate(expr, source, null, XPathResult.STRING_TYPE, null).stringValue;
+			return doc.evaluate(expr, source, null, XPathResult.STRING_TYPE, null).stringValue;
 		}
+		var i = 0;
 		while (source = sources.iterateNext()) {
+			++i;
 			var mount = evalXPath(source, '@mount');
+			// only the dead can know peace from this encoding chaos
 			var name = fixEncoding(evalXPath(source, 'server_name/text()'));
 			var title = fixEncoding(evalXPath(source, 'title/text()'));
 			var url = evalXPath(source, 'server_url/text()');
-			url = url.match(/^http:\/\//) ? url : ('http://' + url);
+			// don't display links with no dots or links set by software defaults
+			url = url.match(/^([^.]*|http:\/\/(www.shoutcast.com|savonet.sf.net))$/) ? '' : (url.match(/^http:\/\//) ? url : ('http://' + url));
 			var short_url = url.substr(7);
-			short_url = short_url.match(/^www./) ? short_url.substr(4) : short_url;
+			short_url = short_url.match(/^www\./) ? short_url.substr(4) : short_url;
 			short_url = short_url.length > 21 ? (short_url.substr(0, 21-3) + '...') : short_url;
-			name = name.replace(/(, )?(©|\(c\)).*$/, '').replace(/( - )?(OGG|MP3)$/, '').replace(/ - www\..+$/, '');
-			name = name == '' ? mount.substr(1).replace(/\.(ogg|mp3)$/, '') : name;
+			// some stations add boilerplate copyright notices or links at the end, remove these
+			name = name.replace(/(, )?(©|\(c\)).*$/, '').replace(/( -)? (OGG|MP3)$/, '').replace(/ - www\..+$/, '');
+			// others display the mount point or default names, use the local mount point instead
+			name = name.match(/^(|\/.*|Unspecified name|Unnamed Server)$/) ? mount.substr(1).replace(/\.(ogg|mp3)$/, '').split('_').join(' ') : name;
 			var stream = 'radio' + mount;
 			var td1 = $('<td>').text(name);
 			var td2 = $('<td>').text(title);
@@ -64,6 +77,7 @@ $(function() {
 			td2.click(context, clickHandler);
 			$('#channel-list tbody').append(tr);
 		}
+		console.log('got', i, 'channels');
 	}, 'xml').fail(function() {
 		console.error(arguments);
 	});

@@ -3,11 +3,13 @@
 This is the unpacked source code of the "fix encoding" bookmarklet,
 available at <http://domnit.org/bookmarklets/>.
 
-Version 1.1
+Version 1.2
 
 2007 Lenny Domnitser, copyright waived
-
-Modified by Tillmann Karras to not use list comprehensions.
+2014 Tillmann Karras:
+- export fixEncoding function instead of applying it to the whole document
+- don't use list comprehensions
+- fix recursively
 
 */
 
@@ -47,8 +49,8 @@ function sub(s) {
 }
 
 function fixEncoding(s) {
-	s = s.replace(pat, sub);
-	return s;
+	var t = s.replace(pat, sub);
+	return t == s ? t : fixEncoding(t);
 }
 
 window.fixEncoding = fixEncoding;
