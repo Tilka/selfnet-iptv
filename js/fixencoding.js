@@ -55,4 +55,4 @@ function fixEncoding(s) {
 
 window.fixEncoding = fixEncoding;
 
-})(window);
+})(this);
