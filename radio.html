@@ -47,16 +47,15 @@
 var Selfnet = {};
 
 Selfnet.Timer = function(callback, delay) {
-	var timerID, startTime, remaining = delay, me = this;
-	me.delay = delay;
+	var timerID, lastExecution = new Date(), me = this;
 	function execute() {
 		timerID = null;
-		remaining = me.delay;
+		lastExecution = new Date();
 		callback(me);
 	}
 	function reschedule() {
+		var remaining = me.delay - (new Date() - lastExecution);
 		timerID = setTimeout(execute, remaining);
-		startTime = new Date();
 	}
 	me.start = function() {
 		if (!timerID) {
@@ -74,10 +73,10 @@ Selfnet.Timer = function(callback, delay) {
 		if (timerID) {
 			clearTimeout(timerID);
 			timerID = null;
-			remaining -= new Date() - startTime;
 		}
 		return me;
 	};
+	me.delay = delay;
 };
 
 
