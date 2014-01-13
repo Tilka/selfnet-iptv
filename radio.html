@@ -101,7 +101,7 @@ $(function() {
 		}
 
 		var mount = evalXPath(source, '@mount');
-		var id = mount.substr(2);
+		var id = mount.substr(2).replace('.', '-');
 		// only the dead can know peace from this encoding chaos
 		var name = fixEncoding(evalXPath(source, 'server_name/text()'));
 		var title = fixEncoding(evalXPath(source, 'title/text()'));
@@ -118,7 +118,7 @@ $(function() {
 		var short_title = title.length > 80 ? (title.substr(0, 80-3) + '...') : title;
 		var stream = 'radio' + mount;
 
-		if (currentlyPlaying == mount) {
+		if (id == currentlyPlaying) {
 			updateMetaData(name, title);
 		}
 
@@ -136,6 +136,7 @@ $(function() {
 			updateMetaData(name, title);
 			$('#channel-list tr').removeClass('active');
 			tr.addClass('active');
+			currentlyPlaying = id;
 		}
 		td1.click(clickHandler);
 		td2.click(clickHandler);
@@ -143,7 +144,7 @@ $(function() {
 		// === add to table ===
 		var oldElement = $('#' + id);
 		if (oldElement.length) {
-			oldElement.replace(tr);
+			oldElement.replaceWith(tr);
 		} else {
 			$('#channel-list tbody').append(tr);
 		}
