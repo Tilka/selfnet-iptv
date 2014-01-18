@@ -81,8 +81,7 @@ Selfnet.Timer = function(callback, delay) {
 
 
 $(function() {
-	var player = $('#player').show();
-	player.on('error', function(e) {
+	var player = $('#player').show().on('error', function(e) {
 		console.error(e);
 		if (player.attr('src').match(/ogg$/)) {
 			console.info('If you are using Chrome/Chromium, you may be hitting http://crbug.com/175281. For Firefox, make sure to use version 20 or newer.');
@@ -90,9 +89,16 @@ $(function() {
 	});
 
 	var currentlyPlaying;
-	function updateMetaData(name, title) {
+
+	function updateCurrentChannel(tr, name, title) {
+		currentlyPlaying = tr.attr('id');
+		tr.addClass('active');
 		$('#metadata-name').text(name);
 		$('#metadata-title').text(title);
+	}
+
+	function channelID(mount) {
+		return 'channel-' + mount.replace(/[!,.\/]/g, '');
 	}
 
 	function updateChannel(source, doc) {
@@ -101,7 +107,7 @@ $(function() {
 		}
 
 		var mount = evalXPath(source, '@mount');
-		var id = mount.substr(2).replace('.', '-');
+		var id = channelID(mount);
 		// only the dead can know peace from this encoding chaos
 		var name = fixEncoding(evalXPath(source, 'server_name/text()'));
 		var title = fixEncoding(evalXPath(source, 'title/text()'));
@@ -109,7 +115,7 @@ $(function() {
 		// don't display links with no dots or links set by software defaults
 		url = url.match(/^([^.]*|http:\/\/(www.shoutcast.com|savonet.sf.net))$/) ? '' : (url.match(/^http:\/\//) ? url : ('http://' + url));
 		var short_url = url.substr(7);
-		short_url = short_url.match(/^www\./) ? short_url.substr(4) : short_url;
+		short_url = short_url.replace(/^www\./, '').replace(/\/$/, '');
 		short_url = short_url.length > 21 ? (short_url.substr(0, 21-3) + '...') : short_url;
 		// some stations add boilerplate copyright notices or links at the end, remove these
 		name = name.replace(/( - |, )?(©|\(c\)).*$/, '').replace(/( -)? (OGG|MP3)$/, '').replace(/ - www\..+$/, '');
@@ -117,10 +123,6 @@ $(function() {
 		name = name.match(/^(|\/.*|Unspecified name|Unnamed Server)$/) ? mount.substr(1).replace(/\.(ogg|mp3)$/, '').split('_').join(' ') : name;
 		var short_title = title.length > 80 ? (title.substr(0, 80-3) + '...') : title;
 		var stream = 'radio' + mount;
-
-		if (id == currentlyPlaying) {
-			updateMetaData(name, title);
-		}
 
 		// === create table row ===
 		var td1 = $('<td>').text(name);
@@ -133,10 +135,8 @@ $(function() {
 		var tr = $('<tr>').attr('id', id).append(td1, td2, td3, td4);
 		function clickHandler() {
 			player.attr('src', stream).trigger('play');
-			updateMetaData(name, title);
 			$('#channel-list tr').removeClass('active');
-			tr.addClass('active');
-			currentlyPlaying = id;
+			updateCurrentChannel(tr, name, title);
 		}
 		td1.click(clickHandler);
 		td2.click(clickHandler);
@@ -148,6 +148,11 @@ $(function() {
 		} else {
 			$('#channel-list tbody').append(tr);
 		}
+
+		if (id == currentlyPlaying) {
+			updateCurrentChannel(tr, name, title);
+		}
+
 	}
 
 	function updateChannelList(timer) {
@@ -160,8 +165,8 @@ $(function() {
 				updateChannel(source, doc);
 			}
 			console.log('got', i, 'channels');
-		}, 'xml').fail(function() {
-			console.error(arguments);
+		}, 'xml').fail(function(e) {
+			console.error(e);
 		}).complete(function() {
 			timer.reschedule();
 		});
