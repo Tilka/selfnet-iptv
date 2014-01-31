@@ -25,15 +25,14 @@ $(function() {
     $('#player-container').html('<embed id=player type=application/x-vlc-plugin version=VideoLAN.VLCPlugin.2 toolbar=false width=700 height=400 pluginspage=http://www.videolan.org/vlc/>');
 
     var vlcPlugin = navigator.plugins['VLC Web Plugin'];
-    var notice;
-    if (!vlcPlugin) {
-        notice = 'Please install/enable the VLC browser plugin.';
-    } else {
-        var vlc = $('#player')[0];
+    var vlc = $('#player')[0];
+    function attachVlcEvents() {
+        $('#notice').hide();
         var version = vlc.VersionInfo.split(' ')[0].split('.');
         var major = parseInt(version[0]), minor = parseInt(version[1]);
         if (major * 100 + minor < 201) {
-            notice = 'Upgrading to <a href="http://videolan.org" class="alert-link">VLC 2.1.0 or newer</a> fixes several crashes in the web plugin.';
+            $('#notice-text').html('Upgrading to <a href="http://videolan.org" class="alert-link">VLC 2.1.0 or newer</a> fixes several crashes in the web plugin.');
+            $('#notice').show();
         }
         var events = {
             MediaPlayerOpening:   function() { occurred.opening   = true },
@@ -46,6 +45,20 @@ $(function() {
         $.each(events, function(event_name, func) {
             vlc.addEventListener(event_name, func, false);
         });
+    }
+    var notice;
+    if (!vlcPlugin) {
+        notice = 'Please install the VLC browser plugin.';
+    } else if (!vlc.VersionInfo) {
+        notice = 'Please enable the VLC browser plugin.';
+        var interval = setInterval(function() {
+            if (vlc.VersionInfo) {
+                clearInterval(interval);
+                attachVlcEvents();
+            }
+        }, 1000);
+    } else {
+        attachVlcEvents();
     }
     if (notice) {
         $('#notice-text').html(notice);
