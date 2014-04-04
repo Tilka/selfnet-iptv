@@ -123,7 +123,7 @@ function loadSessions(loadSessionsCallback) {
             if (usingChunkedArrayBuffer) {
                 var sapData = unparsedData.append(response);
             } else {
-                if (response.length == 0) {
+                if (!response || response.length == 0) {
                     return;
                 }
                 var sapData = response.slice(start).toArrayBuffer();
